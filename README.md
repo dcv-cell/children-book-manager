@@ -8,7 +8,9 @@
 children-book-manager/
 ├── backend/      # 后端代码（Node.js）
 ├── frontend/     # 前端 H5 代码（Vue.js 3）
-└── docs/         # 项目文档
+├── docs/         # 项目文档
+├── start.bat     # Windows 一键启动脚本
+└── README.md
 ```
 
 ## 需求文档
@@ -21,14 +23,42 @@ children-book-manager/
 - ISBN 查询：Open Library API / 豆瓣图书 API
 - 图片存储：本地存储
 
-## 开发计划
-1. Day 1：需求分析 + 项目初始化 ✅
-2. Day 2：后端基础框架 + 数据库设计
-3. Day 3：ISBN 图书识别功能（Open Library API + QuaggaJS）
-4. Day 4：图书 CRUD 接口
-5. Day 5：前端 H5 基础页面（Vue.js 3）
-6. Day 6：图书录入页面
-7. Day 7：图书管理页面
-8. Day 8：分享选书功能
-9. Day 9：闲鱼半自动对接
-10. Day 10：测试 + 优化
+## 快速启动
+### Windows 用户
+1. 双击运行 `start.bat`
+2. 等待后端和前端启动
+3. 访问前端地址（默认 http://localhost:5173）
+
+### 手动启动
+#### 后端
+```bash
+cd backend
+npm install
+npm start
+```
+后端地址：http://localhost:3001
+
+#### 前端
+```bash
+cd frontend
+npm install
+npm run dev
+```
+前端地址：http://localhost:5173
+
+## 功能说明
+- **图书管理**：查看、筛选、删除图书
+- **图书录入**：输入或扫描 ISBN 自动获取图书信息，上传实物照片
+- **分享选书**：生成分享链接，他人可挑选图书并加入购物车
+
+## 开发进度
+- ✅ 需求分析 + 项目初始化
+- ✅ 后端基础框架 + 数据库设计
+- ✅ ISBN 图书识别功能
+- ✅ 图书 CRUD 接口
+- ✅ 前端 H5 基础页面
+- ✅ 图书录入页面
+- ✅ 图书管理页面
+- ✅ 分享选书功能
+- ⏳ 闲鱼半自动对接
+- ⏳ 测试 + 优化
