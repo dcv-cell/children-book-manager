@@ -176,7 +176,7 @@ router.post('/analyze-cover', upload.single('cover'), async (req, res) => {
 
     res.json({ book: result });
   } catch (err) {
-    res.status(500).json({ error: '封面分析失败: ' + err.message });
+    res.status(500).json({ error: '封面分析失败: ' + (err.response?.data?.error?.message || err.message) });
   }
 });
 
