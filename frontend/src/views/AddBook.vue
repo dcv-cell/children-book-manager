@@ -19,6 +19,34 @@ const bookForm = ref({
 });
 const photos = ref([]);
 const isScanning = ref(false);
+const isAnalyzing = ref(false);
+
+const analyzeCover = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  isAnalyzing.value = true;
+  try {
+    const formData = new FormData();
+    formData.append('cover', file);
+    const res = await api.analyzeCover(formData);
+    const book = res.data.book;
+    if (book) {
+      bookForm.value = {
+        ...bookForm.value,
+        title: book.title || '',
+        author: book.author || '',
+        age_range: book.age_range || '',
+        tags: book.tags || ''
+      };
+    }
+  } catch (err) {
+    console.error('封面分析失败:', err);
+    alert('封面分析失败，请手动填写');
+  } finally {
+    isAnalyzing.value = false;
+  }
+};
 
 const searchByISBN = async () => {
   if (!isbn.value) return;
@@ -178,6 +206,11 @@ const handleSubmit = async (e) => {
       <div class="form-group">
         <label>封面 URL</label>
         <input v-model="bookForm.cover_url" type="url" />
+      </div>
+      <div class="form-group">
+        <label>或上传封面图片自动分析</label>
+        <input type="file" accept="image/*" @change="analyzeCover" :disabled="isAnalyzing" />
+        <div v-if="isAnalyzing">正在分析封面...</div>
       </div>
       <div class="form-group">
         <label>实物照片（最多 5 张）</label>

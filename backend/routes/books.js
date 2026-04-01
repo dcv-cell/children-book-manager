@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { getBookInfoByISBN } = require('../isbn');
+const { analyzeBookCover } = require('../volcengine');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -154,6 +155,29 @@ router.put('/:id', upload.array('photos', 5), (req, res) => {
       res.json({ message: '图书更新成功' });
     });
   });
+});
+
+// 分析图书封面
+router.post('/analyze-cover', upload.single('cover'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: '请上传封面图片' });
+    }
+
+    // 读取图片文件并转换为 base64
+    const imageBuffer = fs.readFileSync(req.file.path);
+    const imageBase64 = imageBuffer.toString('base64');
+
+    // 调用火山引擎分析
+    const result = await analyzeBookCover(imageBase64);
+
+    // 删除临时文件
+    fs.unlinkSync(req.file.path);
+
+    res.json({ book: result });
+  } catch (err) {
+    res.status(500).json({ error: '封面分析失败: ' + err.message });
+  }
 });
 
 // 删除图书

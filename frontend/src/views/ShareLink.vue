@@ -35,7 +35,7 @@ const loadBooks = async () => {
 };
 
 const addToCart = (book) => {
-  if (cart.value.push(book);
+  cart.value.push(book);
 };
 
 const removeFromCart = (index) => {

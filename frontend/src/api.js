@@ -18,6 +18,9 @@ export default {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
   deleteBook: (id) => api.delete(`/books/${id}`),
+  analyzeCover: (formData) => api.post('/books/analyze-cover', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   
   // 分享链接相关
   createShareLink: (data) => api.post('/share-links', data),
