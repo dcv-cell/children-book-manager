@@ -89,8 +89,24 @@ onMounted(() => {
 
 .book-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* 平板端（2列） */
+@media (min-width: 600px) {
+  .book-list {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+/* 桌面端（3+列） */
+@media (min-width: 1024px) {
+  .book-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
 }
 
 .book-card {

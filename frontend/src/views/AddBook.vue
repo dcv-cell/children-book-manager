@@ -190,8 +190,15 @@ const handleSubmit = async (e) => {
 
 <style scoped>
 .add-book {
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
+}
+
+/* 桌面端优化 */
+@media (min-width: 768px) {
+  .add-book {
+    max-width: 800px;
+  }
 }
 
 .isbn-section {

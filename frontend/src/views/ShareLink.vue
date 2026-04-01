@@ -110,9 +110,18 @@ onMounted(() => {
 }
 
 .content {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 2rem;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 1.5rem;
+}
+
+/* 平板/桌面端：侧边购物车 */
+@media (min-width: 768px) {
+  .content {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+  }
 }
 
 .book-list {
