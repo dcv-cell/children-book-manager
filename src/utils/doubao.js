@@ -13,7 +13,7 @@ export async function analyzeBookWithDoubao(description, imageBase64 = null) {
       throw new Error('请先配置火山引擎 API Key');
     }
 
-    const modelId = import.meta.env.VITE_VOLCENGINE_MODEL_ID || 'doubao-seed-2-0-code-250615';
+    const modelId = import.meta.env.VITE_VOLCENGINE_MODEL_ID || 'Ark_bd2000000683509497186';
     const endpoint = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
 
     let prompt = '';
