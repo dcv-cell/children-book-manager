@@ -142,6 +142,9 @@ onMounted(() => {
 
     <div v-else class="book-list">
       <div v-for="book in filteredBooks" :key="book.id" class="book-card">
+        <div v-if="book.coverUrl" class="book-cover">
+          <img :src="book.coverUrl" :alt="book.title" />
+        </div>
         <div class="book-info">
           <h3>{{ book.title }}</h3>
           <p v-if="book.author">作者: {{ book.author }}</p>
@@ -244,6 +247,23 @@ onMounted(() => {
   background: white;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.book-cover {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+}
+
+.book-cover img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: cover;
 }
 
 .book-card:hover {

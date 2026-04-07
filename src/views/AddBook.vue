@@ -1,8 +1,11 @@
+
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import storage from '../utils/storage';
 import { analyzeBookWithDoubao } from '../utils/doubao';
+import { getBookInfoByISBN } from '../utils/openlibrary';
+import Quagga from 'quagga';
 
 const router = useRouter();
 const route = useRoute();
@@ -10,6 +13,8 @@ const route = useRoute();
 const isEdit = ref(false);
 const loading = ref(false);
 const analyzing = ref(false);
+const isScanning = ref(false);
+const isbn = ref('');
 const bookForm = ref({
   title: '',
   author: '',
@@ -20,7 +25,8 @@ const bookForm = ref({
   tags: '',
   location: '',
   status: 'available',
-  description: ''
+  description: '',
+  coverUrl: ''
 });
 
 const descriptionInput = ref('');
@@ -42,13 +48,85 @@ const loadBookForEdit = async (id) => {
         tags: book.tags || '',
         location: book.location || '',
         status: book.status || 'available',
-        description: book.description || ''
+        description: book.description || '',
+        coverUrl: book.coverUrl || ''
       };
+      if (book.coverUrl) {
+        coverImagePreview.value = book.coverUrl;
+      }
     }
   } catch (err) {
     console.error('加载图书失败:', err);
     alert('加载图书失败');
   }
+};
+
+const searchByISBN = async () => {
+  if (!isbn.value) {
+    alert('请输入ISBN编号');
+    return;
+  }
+  try {
+    analyzing.value = true;
+    const book = await getBookInfoByISBN(isbn.value);
+    if (book) {
+      bookForm.value = {
+        ...bookForm.value,
+        title: book.title || '',
+        author: book.author || '',
+        publisher: book.publisher || '',
+        description: book.description || '',
+        coverUrl: book.coverUrl || ''
+      };
+      if (book.coverUrl) {
+        coverImagePreview.value = book.coverUrl;
+      }
+      alert('ISBN查询成功！请检查并补充信息');
+    } else {
+      alert('未找到该ISBN对应的图书，请手动填写');
+    }
+  } catch (err) {
+    console.error('ISBN查询失败:', err);
+    alert('ISBN查询失败，请检查网络连接或手动填写');
+  } finally {
+    analyzing.value = false;
+  }
+};
+
+const startScan = () => {
+  isScanning.value = true;
+  Quagga.init({
+    inputStream: {
+      name: "Live",
+      type: "LiveStream",
+      target: document.querySelector('#scanner'),
+      constraints: {
+        facingMode: "environment"
+      }
+    },
+    decoder: {
+      readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "upc_reader"]
+    }
+  }, (err) => {
+    if (err) {
+      console.error('Quagga初始化失败:', err);
+      alert('摄像头初始化失败，请检查权限');
+      isScanning.value = false;
+      return;
+    }
+    Quagga.start();
+  });
+
+  Quagga.onDetected((data) => {
+    isbn.value = data.codeResult.code;
+    stopScan();
+    searchByISBN();
+  });
+};
+
+const stopScan = () => {
+  isScanning.value = false;
+  Quagga.stop();
 };
 
 const handleCoverUpload = (event) => {
@@ -65,6 +143,7 @@ const handleCoverUpload = (event) => {
   const reader = new FileReader();
   reader.onload = (e) => {
     coverImagePreview.value = e.target.result;
+    bookForm.value.coverUrl = e.target.result;
   };
   reader.readAsDataURL(file);
 };
@@ -142,14 +221,44 @@ onMounted(() => {
     loadBookForEdit(route.query.id);
   }
 });
+
+onUnmounted(() => {
+  if (isScanning.value) {
+    Quagga.stop();
+  }
+});
 </script>
 
 <template>
   <div class="add-book">
     <h1>{{ isEdit ? '编辑图书' : '添加图书' }}</h1>
     
+    <!-- ISBN 扫描区域 -->
+    <div class="isbn-section">
+      <h3>📖 ISBN 扫码查询</h3>
+      <p class="hint">扫描图书封底的ISBN条码，自动获取图书信息</p>
+      
+      <div class="isbn-input-group">
+        <input 
+          v-model="isbn" 
+          type="text" 
+          placeholder="输入或扫描 ISBN" 
+          @keyup.enter="searchByISBN"
+        />
+        <button class="btn btn-primary" @click="searchByISBN" :disabled="analyzing">
+          {{ analyzing ? '查询中...' : '查询' }}
+        </button>
+        <button class="btn" @click="isScanning ? stopScan() : startScan()">
+          {{ isScanning ? '停止扫描' : '📷 开始扫描' }}
+        </button>
+      </div>
+      
+      <div id="scanner" v-if="isScanning" class="scanner"></div>
+    </div>
+    
+    <!-- AI 识别区域 -->
     <div class="ai-section">
-      <h3>🤖 智能识别</h3>
+      <h3>🤖 智能识别（可选）</h3>
       <p class="hint">输入图书描述或上传封面图片，让 AI 帮你自动填写信息</p>
       
       <div class="ai-inputs">
@@ -192,6 +301,7 @@ onMounted(() => {
       </button>
     </div>
     
+    <!-- 图书信息表单 -->
     <div class="form-section">
       <h3>📝 图书信息</h3>
       
@@ -282,7 +392,7 @@ onMounted(() => {
   margin-bottom: 2rem;
 }
 
-.ai-section, .form-section {
+.isbn-section, .ai-section, .form-section {
   background: white;
   border-radius: 16px;
   padding: 1.5rem;
@@ -290,7 +400,7 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-.ai-section h3, .form-section h3 {
+.isbn-section h3, .ai-section h3, .form-section h3 {
   margin-top: 0;
   margin-bottom: 0.5rem;
 }
@@ -299,6 +409,28 @@ onMounted(() => {
   color: #666;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+}
+
+.isbn-input-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.isbn-input-group input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.scanner {
+  width: 100%;
+  height: 400px;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .ai-inputs {
@@ -444,3 +576,4 @@ onMounted(() => {
   background: #e0e0e0;
 }
 </style>
+
