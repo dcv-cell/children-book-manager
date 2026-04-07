@@ -1,64 +1,108 @@
+# 儿童绘本二手书管理系统（纯前端版）
 
-# 儿童绘本二手书管理系统（H5 版）
+一个纯前端的儿童绘本二手书管理工具，支持图书录入、管理和分享功能。
 
-一个个人使用的儿童绘本二手书管理工具，支持图书录入、管理、分享选书和闲鱼半自动对接。
+## ✨ 特性
 
-## 项目结构
+- 📚 **图书管理**：添加、查看、编辑、删除图书
+- 🤖 **智能识别**：直接调用豆包大模型识别图书信息
+- 💾 **本地存储**：使用 IndexedDB 本地存储数据
+- 📋 **一键分享**：生成图书信息文本，可复制到任意平台
+- 📱 **响应式设计**：完美支持移动端
+
+## 🛠️ 技术栈
+
+- **前端框架**：Vue.js 3 + Vite
+- **数据存储**：localForage (IndexedDB)
+- **AI 模型**：豆包大模型（火山引擎）
+- **样式**：原生 CSS
+
+## 🚀 快速开始
+
+### 本地开发
+
+```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+
+# 构建生产版本
+npm run build
+```
+
+### 环境配置
+
+在项目根目录创建 `.env` 文件：
+
+```env
+VITE_VOLCENGINE_API_KEY=你的火山引擎API密钥
+VITE_VOLCENGINE_MODEL_ID=doubao-seed-2-0-code-250615
+```
+
+## 📖 使用说明
+
+### 添加图书
+
+1. 点击"添加图书"按钮
+2. 输入图书描述或上传封面图片
+3. 点击"智能识别"获取图书信息
+4. 补充或修改图书信息
+5. 保存图书
+
+### 分享图书
+
+1. 在图书列表中找到要分享的图书
+2. 点击"分享"按钮
+3. 复制生成的图书信息文本
+4. 粘贴到闲鱼、微信等平台发送
+
+## 📁 项目结构
+
 ```
 children-book-manager/
-├── backend/      # 后端代码（Node.js）
-├── frontend/     # 前端 H5 代码（Vue.js 3）
-├── docs/         # 项目文档
-├── start.bat     # Windows 一键启动脚本
-└── README.md
+├── src/
+│   ├── components/     # 组件
+│   ├── views/          # 页面
+│   ├── utils/          # 工具函数
+│   ├── store/          # 数据存储
+│   ├── App.vue         # 根组件
+│   └── main.js         # 入口文件
+├── public/             # 静态资源
+├── index.html          # HTML 模板
+├── package.json        # 依赖配置
+└── vite.config.js      # Vite 配置
 ```
 
-## 需求文档
-详见 [docs/requirements.md](./docs/requirements.md)
+## 🌐 GitHub Pages 部署
 
-## 技术栈
-- 前端：HTML + CSS + JavaScript + Vue.js 3 + QuaggaJS（扫码）
-- 后端：Node.js + Express
-- 数据库：SQLite
-- ISBN 查询：Open Library API / 豆瓣图书 API
-- 图片存储：本地存储
+### 方法一：自动部署（推荐）
 
-## 快速启动
-### Windows 用户
-1. 双击运行 `start.bat`
-2. 等待后端和前端启动
-3. 访问前端地址（默认 http://localhost:5173）
+1. Fork 此仓库
+2. 在仓库设置中启用 GitHub Pages
+3. 设置 Source 为 `gh-pages` 分支
+4. 推送代码后自动部署
 
-### 手动启动
-#### 后端
+### 方法二：手动部署
+
 ```bash
-cd backend
-npm install
-npm start
+# 构建项目
+npm run build
+
+# 安装 gh-pages
+npm install -D gh-pages
+
+# 部署
+npx gh-pages -d dist
 ```
-后端地址：http://localhost:3001
 
-#### 前端
-```bash
-cd frontend
-npm install
-npm run dev
-```
-前端地址：http://localhost:5173
+访问地址：`https://你的用户名.github.io/children-book-manager/`
 
-## 功能说明
-- **图书管理**：查看、筛选、删除图书
-- **图书录入**：输入或扫描 ISBN 自动获取图书信息，上传实物照片
-- **分享选书**：生成分享链接，他人可挑选图书并加入购物车
+## 🤝 贡献
 
-## 开发进度
-- ✅ 需求分析 + 项目初始化
-- ✅ 后端基础框架 + 数据库设计
-- ✅ ISBN 图书识别功能
-- ✅ 图书 CRUD 接口
-- ✅ 前端 H5 基础页面
-- ✅ 图书录入页面
-- ✅ 图书管理页面
-- ✅ 分享选书功能
-- ⏳ 闲鱼半自动对接
-- ⏳ 测试 + 优化
+欢迎提交 Issue 和 Pull Request！
+
+## 📄 许可证
+
+MIT License

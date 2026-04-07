@@ -1,21 +1,25 @@
 {
-  "name": "frontend",
+  "name": "children-book-manager",
+  "description": "儿童绘本二手书管理系统（纯前端版）",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "vite build && gh-pages -d dist"
   },
   "dependencies": {
     "axios": "^1.14.0",
+    "localforage": "^1.10.0",
     "quagga": "^0.12.1",
     "vue": "^3.5.30",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.5",
+    "gh-pages": "^6.3.0",
     "vite": "^8.0.1"
   }
 }

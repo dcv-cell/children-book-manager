@@ -8,4 +8,10 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
   },
+  // GitHub Pages 部署配置
+  base: '/children-book-manager/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+  },
 })
