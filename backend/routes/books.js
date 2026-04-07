@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const { getBookInfoByISBN } = require('../isbn');
+const { getBookInfoHybrid } = require('../doubao');
 const { analyzeBookCover } = require('../volcengine');
 const multer = require('multer');
 const path = require('path');
@@ -67,15 +67,18 @@ router.get('/:id', (req, res) => {
 // 通过 ISBN 查询图书信息（不保存）
 router.get('/isbn/:isbn', async (req, res) => {
   try {
-    const bookInfo = await getBookInfoByISBN(req.params.isbn);
+    console.log(`收到 ISBN 查询请求: ${req.params.isbn}`);
+    const bookInfo = await getBookInfoHybrid(req.params.isbn);
     if (!bookInfo) {
       res.status(404).json({ error: '未找到该 ISBN 对应的图书' });
       return;
     }
+    console.log('返回图书信息:', bookInfo);
     res.json({ book: bookInfo });
   } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
+    console.error('ISBN 查询错误:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // 添加图书

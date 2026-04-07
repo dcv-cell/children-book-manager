@@ -1,0 +1,42 @@
+# Render 部署配置
+# 文档: https://render.com/docs/yaml-spec
+
+services:
+  # 后端服务
+  - type: web
+    name: children-book-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: children-book-backend
+          envVarKey: RENDER_EXTERNAL_URL
+    autoDeploy: true
+    branch: main
+
+  # 前端服务 - 使用 static site
+  - type: web
+    name: children-book-frontend
+    env: static
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: children-book-backend
+          envVarKey: RENDER_EXTERNAL_URL
+    autoDeploy: true
+    branch: main
+    pullRequestPreviewsEnabled: false
+
+# 数据库 - 使用 SQLite（文件存储，不需要额外的数据库服务）
+# 注意：SQLite 在 Render 上会在每次部署时重置，
+# 如果需要持久化数据，建议使用 Render PostgreSQL

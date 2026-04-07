@@ -68,6 +68,35 @@ function initTables() {
     )
   `);
 
+  // 闲鱼商品表
+  db.run(`
+    CREATE TABLE IF NOT EXISTS xianyu_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      book_id INTEGER,
+      xianyu_url TEXT,
+      xianyu_status TEXT DEFAULT 'draft',
+      posted_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (book_id) REFERENCES books(id)
+    )
+  `);
+
+  // 订单表
+  db.run(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      book_id INTEGER,
+      xianyu_order_id TEXT,
+      buyer_name TEXT,
+      total_amount REAL,
+      status TEXT DEFAULT 'pending',
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (book_id) REFERENCES books(id)
+    )
+  `);
+
   console.log('数据库表初始化完成');
 }
 
